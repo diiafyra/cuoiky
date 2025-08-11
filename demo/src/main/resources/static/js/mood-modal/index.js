@@ -120,4 +120,67 @@
     ctx.clearRect(0,0,canvas.width,canvas.height);
     for (const key in clickCount) clickCount[key]=0;
   });
+
+
+// tính tỉ lệ an toàn: (a-b)/(a+b) => [-1..1], nếu mẫu = 0 thì 0
+const safeRatio = (a, b) => {
+  const A = Number(a) || 0, B = Number(b) || 0;
+  const den = A + B; if (!den) return 0;
+  return (A - B) / den;
+};
+
+// tính circumplex từ clickCount
+const calcCircumplex = (cc) => {
+  const happy = cc?.happy || 0;
+  const sad = cc?.sad || 0;
+  const energetic = cc?.energetic || 0;
+  const calm = cc?.calm || 0;
+  // valence ~ pleasantness: happy vs sad
+  const valence = safeRatio(happy, sad);
+  // energy/arousal: energetic vs calm
+  const energy  = safeRatio(energetic, calm);
+  return { valence, energy }; // [-1..1]
+};
+
+if (modal) {
+  modal.addEventListener('mood:submit', async (e) => {
+    try {
+      const { text, clickCount } = e.detail || {};
+      const circumplex = calcCircumplex(clickCount);
+
+      const body = {
+        moodText: (text || '').trim(),
+        circumplex,                // map {-1..1}
+        ...readSpotifyTokens(),    // optional: access/refresh
+      };
+
+      // gọi BE -> BE dùng ExternalApiClient.getPersonalAsync()
+      const res = await fetch('/api/recommendations/mood', {
+        method: 'POST',
+        headers: { 'Content-Type':'application/json' },
+        body: JSON.stringify(body)
+      });
+      const data = await res.json();
+
+      if (!data?.success || !Array.isArray(data.playlists) || data.playlists.length === 0) {
+        alert('Chưa gợi ý được playlist. Thử mô tả cảm xúc kỹ hơn nhé!');
+        return;
+      }
+
+      // lấy playlist đầu tiên để xem bài hát
+      const first = data.playlists[0];
+      // điều hướng sang trang hiển thị tracks (FE sẽ gọi API lấy bài)
+      const params = new URLSearchParams({
+        pid: first.id || first.externalId || '',
+        pname: first.title || first.name || '',
+        pimg: (first.coverUrl || first.imageUrl || '')
+      });
+      window.location.href = `/recommend/playlist?${params.toString()}`;
+    } catch (err) {
+      console.error('[mood->recommend] error:', err);
+      alert('Có lỗi khi gửi cảm xúc. Vui lòng thử lại.');
+    }
+  });
+}
+
 })();
