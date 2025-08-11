@@ -1,0 +1,2 @@
+# Ignore Firebase service account file
+src/main/resources/firebase-service-account.json

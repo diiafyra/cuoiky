@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi" th:fragment="layout(title, styles, content, scripts)">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title th:replace="${title}">Moodsic</title>
+
+  <!-- Shared styles -->
+  <link rel="stylesheet" href="/css/shared/base.css"/>
+  <link rel="stylesheet" href="/css/shared/layout.css"/>
+  <link rel="stylesheet" href="/css/mood-modal/index.css"/>
+
+  <!-- Page-specific styles -->
+  <th:block th:replace="${styles}"></th:block>
+</head>
+<body>
+  <!-- Nav + Drawer -->
+  <header th:replace="~{fragments/nav :: nav}"></header>
+  <div th:replace="~{fragments/nav :: drawer}"></div>
+
+  <!-- Main content -->
+  <main>
+    <th:block th:replace="${content}"></th:block>
+  </main>
+
+  <!-- Footer -->
+  <footer th:replace="~{fragments/footer :: footer}"></footer>
+
+  <!-- Shared scripts -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script type="module" src="/js/auth/index.js"></script>
+  <script type="module" src="/js/mood-modal/index.js"></script>
+  <script type="module" src="/js/shared/layout.js"></script>
+
+  <!-- Page-specific scripts -->
+  <th:block th:replace="${scripts}"></th:block>
+
+  <!-- Shared: Mood modal -->
+  <div id="mood-modal" class="mood-modal" aria-hidden="true">
+    <div class="mood-backdrop" data-close-mood></div>
+    <div class="mood-dialog" role="dialog" aria-modal="true" aria-labelledby="moodTitle" tabindex="-1">
+      <header class="mood-dialog__header">
+        <h2 id="moodTitle">Canvas cảm xúc</h2>
+        <button class="icon-btn" data-close-mood aria-label="Đóng">✕</button>
+      </header>
+
+      <section class="section-left">
+        <div class="screen">
+          <textarea placeholder="Mô tả cảm xúc..." class="textMood"></textarea>
+          <canvas id="seedlingCanvas" class="canvas"></canvas>
+        </div>
+        <button class="btn-delete" id="btnDelete">Xóa</button>
+
+        <div class="circle-keyboard">
+          <div class="outer-circle">
+            <div class="quarter happy" data-feeling="happy">Happy</div>
+            <div class="quarter calm" data-feeling="calm">Calm</div>
+            <div class="quarter sad" data-feeling="sad">Sad</div>
+            <div class="quarter energetic" data-feeling="energetic">Energetic</div>
+          </div>
+          <div class="inner-circle">
+            <button class="btn-send" id="btnSend">Gửi</button>
+          </div>
+        </div>
+      </section>
+
+      <footer class="mood-dialog__footer">
+        <small class="muted">Ảnh canvas sẽ được lưu kèm phiên gợi ý.</small>
+      </footer>
+    </div>
+  </div>
+</body>
+</html>

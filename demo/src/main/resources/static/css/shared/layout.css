@@ -1,0 +1,184 @@
+/* =======================================================
+   LAYOUT.CSS — Shared (Nav, Drawer, Footer, Layout frame)
+   Sticky footer + Fixed navbar
+   ======================================================= */
+
+/* 0) ROOT & PAGE FRAME */
+:root {
+  --page-pad: clamp(16px, 4vw, 48px);
+  /* Chiều cao nav; chỉnh cho khớp UI của bạn (64–88px).
+     Bạn đang padding-top:80px nên mình đặt 80px cho khớp. */
+  --nav-h: 80px;
+}
+
+/* ĐẢM BẢO khung trang full height */
+html, body { height: 100%; }
+
+/* Body là flex-column để footer dính đáy khi nội dung ít */
+body {
+  min-height: 100dvh;      /* ưu tiên dynamic viewport (Chrome mobile mới) */
+  min-height: 100svh;      /* fallback thêm cho iOS Safari mới */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Main sẽ giãn nở chiếm hết khoảng trống còn lại */
+main {
+  flex: 1 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+
+  /* Vì nav fixed nên cần đệm đúng chiều cao nav */
+  padding-top: var(--nav-h);
+}
+
+main .container,
+.site-footer .container {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding-inline: var(--page-pad);
+}
+
+.section {
+  margin-block: clamp(16px, 3vw, 40px);
+}
+
+body.no-scroll { overflow: hidden; }
+
+/* 1) NAVBAR (fixed) */
+.nav {
+  position: fixed;
+  inset: 0 0 auto 0;   /* top:0; left:0; right:0 */
+  z-index: 200;
+  backdrop-filter: blur(10px);
+  background: color-mix(in oklab, var(--ocean-900) 72%, transparent);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+
+  /* Chiều cao & bố cục */
+  min-height: var(--nav-h);
+  padding: 12px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-size: 20px;
+  font-weight: 900;
+  letter-spacing: 0.3px;
+  color: var(--brick-700);
+}
+.nav__left { display: flex; gap: 16px; align-items: center; }
+.nav__links { display: flex; align-items: center; gap: 6px; }
+.nav__links a {
+  font-size: 15.5px;
+  color: #e9f3f6;
+  text-decoration: none;
+  padding: 8px 12px;
+  border-radius: 10px;
+  opacity: 0.95;
+  transition: background 0.18s, color 0.18s, transform 0.12s;
+}
+.nav__links a:hover,
+.nav__links a.active {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  transform: translateY(-1px);
+}
+.nav__right { display: flex; gap: 12px; align-items: center; }
+.nav__mood { box-shadow: 0 8px 18px rgba(190, 143, 76, 0.25); }
+
+/* avatar + dropdown */
+.avatar {
+  width: 40px; height: 40px; border-radius: 50%;
+  overflow: hidden; border: 2px solid rgba(255, 255, 255, 0.2);
+  display: inline-block;
+}
+.avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.avatar-btn { background: transparent; border: 0; padding: 0; cursor: pointer; }
+
+.dropdown {
+  position: absolute; right: 16px; top: calc(var(--nav-h) - 10px);
+  width: 200px; z-index: 250; background: var(--panel);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px; padding: 8px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+  display: none;
+}
+.dropdown[aria-hidden="false"] { display: block; }
+.dropdown a, .dropdown button {
+  display: block; width: 100%; text-align: left; background: transparent;
+  color: #fff; border: 0; padding: 10px 12px; border-radius: 10px; cursor: pointer;
+}
+.dropdown a:hover, .dropdown button:hover { background: rgba(255, 255, 255, 0.08); }
+
+/* burger */
+.nav__burger {
+  display: none; width: 44px; height: 44px; border: 0; cursor: pointer;
+  border-radius: 10px; padding: 10px; background: rgba(255, 255, 255, 0.08);
+  position: relative; z-index: 260;
+}
+.nav__burger span {
+  display: block; height: 2px; background: #fff; margin: 5px 0; border-radius: 2px;
+  transition: transform 0.22s, opacity 0.22s;
+}
+.nav__burger.is-open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.nav__burger.is-open span:nth-child(2) { opacity: 0; }
+.nav__burger.is-open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+@media (max-width: 1024px) {
+  .nav__links { display: none; }
+  .nav__burger { display: inline-flex; align-items: center; justify-content: center; }
+}
+
+/* 2) MOBILE DRAWER */
+.nav-drawer { display: none; }
+.nav-drawer.is-open {
+  position: fixed; display: block; z-index: 1000; inset: 0;
+}
+
+.nav-drawer__overlay {
+  position: fixed; inset: 0; background: rgba(0, 0, 0, 0.5);
+  z-index: 240; display: none;
+}
+.nav-drawer.is-open .nav-drawer__overlay { display: block; }
+
+.nav-drawer__panel {
+  position: fixed; top: 0; right: 0; height: 100%;
+  width: min(86vw, 360px); padding: 16px;
+  display: flex; flex-direction: column; gap: 12px;
+  background: var(--panel, rgba(0, 0, 0, 0.35));
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+  z-index: 250; transform: translateX(100%);
+  transition: transform 0.22s ease;
+  border-top-left-radius: 16px; border-bottom-left-radius: 16px;
+  box-shadow: -12px 0 40px rgba(0, 0, 0, 0.35);
+}
+.nav-drawer.is-open .nav-drawer__panel { transform: translateX(0); }
+
+.nav-drawer__links a {
+  display: block; padding: 12px; border-radius: 10px; color: #fff; text-decoration: none;
+}
+.nav-drawer__links a:hover { background: rgba(255, 255, 255, 0.08); }
+
+/* 3) FOOTER (footer sẽ “dính đáy” vì main đã flex:1) */
+.site-footer {
+  /* Không cần margin-top lớn; có thể giữ chút khoảng cách nếu thích */
+  margin-top: 32px;
+  background: rgba(0, 0, 0, 0.25);
+  padding: 22px 0;
+}
+.footer__grid {
+  display: grid; grid-template-columns: 1fr auto auto; align-items: center; gap: 16px;
+}
+.footer__links a { margin-right: 14px; text-decoration: none; }
+.footer__social a { margin-left: 12px; opacity: 0.9; text-decoration: none; }
+.footer__social a:hover { opacity: 1; }
+@media (max-width: 640px) {
+  .footer__grid { grid-template-columns: 1fr; text-align: center; }
+}
+
+/* 4) UTILITIES */
+.is-hidden { display: none !important; }

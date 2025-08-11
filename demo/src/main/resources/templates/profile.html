@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+  <th:block
+    th:replace="~{layouts/main :: layout(
+  title=~{::title},
+  styles=~{::link[@data-page='style']},
+  content=~{::section[@data-page='content']},
+  scripts=~{::script[@data-page='script']}
+)}"
+  >
+    <head>
+      <title>Hồ sơ • Moodsic</title>
+      <link data-page="style" rel="stylesheet" href="/css/profile/index.css" />
+    </head>
+
+    <body>
+      <section data-page="content" class="container section">
+        <header class="section__head">
+          <div>
+            <h2>Hồ sơ</h2>
+            <small class="muted">Sở thích âm nhạc</small>
+          </div>
+        </header>
+
+        <div class="profile__info card">
+          <div class="avatar">
+            <img
+              class="js-avatar"
+              src="/asset/profile.png"
+              alt="avatar"
+            />
+          </div>
+          <div class="meta">
+            <div class="row">
+              <div class="value"><span class="js-email">—</span></div>
+            </div>
+          </div>
+        </div>
+
+        <form id="mpLiteForm" class="card profile__form">
+          <h3>Your music taste</h3>
+
+          <div class="row">
+            <label>Vibe</label>
+            <div class="chips chips--vibe" role="group" aria-label="Chọn vibe">
+              <button type="button" data-vibe="CHILL">Chill</button>
+              <button type="button" data-vibe="HAPPY">Happy</button>
+              <button type="button" data-vibe="FOCUS">Focus</button>
+              <button type="button" data-vibe="PARTY">Party</button>
+            </div>
+            <input id="vibe" type="hidden" />
+            <small class="muted"
+              >Dùng vibe để tinh chỉnh năng lượng & mood tự động.</small
+            >
+          </div>
+
+          <div class="row">
+            <label>Thể loại ưa thích</label>
+            <input
+              id="genres"
+              type="text"
+              placeholder="ví dụ: pop, rock, indie"
+            />
+            <small class="muted">Nhập 2–5 thể loại, cách nhau dấu phẩy.</small>
+          </div>
+
+          <div class="row">
+            <label>Nghệ sĩ ưa thích</label>
+            <input
+              id="artists"
+              type="text"
+              placeholder="ví dụ: Taylor Swift, Drake"
+            />
+          </div>
+
+          <div class="row">
+            <label>Ngôn ngữ</label>
+            <input id="langs" type="text" placeholder="ví dụ: en, vi, ko" />
+          </div>
+
+          <div class="actions">
+            <button id="btnSave" type="submit" class="btn btn-primary">
+              Lưu
+            </button>
+            <span id="saveState" class="muted" aria-live="polite"></span>
+          </div>
+        </form>
+      </section>
+      <script type="module" src="/js/auth/index.js"></script>
+      <script
+        data-page="script"
+        type="module"
+        src="/js/profile/lite.js"
+      ></script>
+    </body>
+  </th:block>
+</html>

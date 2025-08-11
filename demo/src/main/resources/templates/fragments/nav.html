@@ -1,0 +1,60 @@
+<!-- src/main/resources/templates/fragments/nav.html -->
+<div class="nav" th:fragment="nav">
+  <div class="nav__left">
+    <a class="logo" th:href="@{/}">Moodsic</a>
+    <nav class="nav__links">
+      <a th:href="@{/}" th:classappend="${(path == '/' or path == '/home') ? ' active' : ''}">Home</a>
+      <a th:href="@{/search}" th:classappend="${path != null and path.startsWith('/search') ? ' active' : ''}">Search</a>
+      <a th:href="@{/me/playlists}" th:classappend="${path != null and path.startsWith('/me/playlists') ? ' active' : ''}">Playlists</a>
+      <a th:href="@{/me/history}" th:classappend="${path != null and path.startsWith('/me/history') ? ' active' : ''}">History</a>
+    </nav>
+  </div>
+
+  <div class="nav__right">
+    <button class="btn btn-primary nav__mood" data-open-mood>+ Nhập/Vẽ cảm xúc</button>
+
+    <!-- Guest/User dựa trên isAuthenticated từ GlobalModelAttributes -->
+    <div class="auth auth--guest" th:if="${!isAuthenticated}">
+      <a class="btn btn-ghost" th:href="@{/login}">Đăng nhập</a>
+      <a class="btn btn-outline" th:href="@{/register}">Đăng ký</a>
+    </div>
+
+    <div class="auth auth--user" th:if="${isAuthenticated}">
+      <button class="avatar-btn" id="profileBtn" aria-expanded="false" aria-haspopup="true">
+        <span class="avatar">
+          <img class="js-avatar" src="/asset/profile.png" alt="avatar"/>
+        </span>
+      </button>
+      <div class="dropdown" id="profileMenu" role="menu" aria-hidden="true">
+        <a th:href="@{/profile}" role="menuitem">Profile</a>
+        <button id="btnLogout" role="menuitem">Đăng xuất</button>
+      </div>
+    </div>
+
+    <button class="nav__burger" id="burgerBtn" aria-label="Mở menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</div>
+
+<div class="nav-drawer" id="navDrawer" th:fragment="drawer">
+  <div class="nav-drawer__panel card">
+    <div class="nav-drawer__links" role="navigation" aria-label="Ngăn kéo điều hướng">
+      <a th:href="@{/}">Home</a>
+      <a th:href="@{/search}">Search</a>
+      <a th:href="@{/me/playlists}">Playlists</a>
+      <a th:href="@{/me/history}">History</a>
+    </div>
+    <button class="btn btn-primary" data-open-mood>+ Nhập/Vẽ cảm xúc</button>
+
+    <div class="nav-drawer__auth auth--guest" th:if="${!isAuthenticated}">
+      <a class="btn btn-ghost" th:href="@{/login}">Đăng nhập</a>
+      <a class="btn btn-outline" th:href="@{/register}">Đăng ký</a>
+    </div>
+    <div class="nav-drawer__auth auth--user" th:if="${isAuthenticated}">
+      <a class="btn btn-ghost" th:href="@{/profile}">Profile</a>
+      <button class="btn btn-outline" id="btnLogoutMobile">Đăng xuất</button>
+    </div>
+  </div>
+  <div class="nav-drawer__overlay" id="drawerOverlay"></div>
+</div>

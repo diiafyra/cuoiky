@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+  <th:block th:replace="~{layouts/main :: layout(
+    title=~{::title},
+    styles=~{::link[@data-page='style']},
+    content=~{::section[@data-page='content']},
+    scripts=~{::script[@data-page='script']}
+  )}">
+    <head>
+      <title>Moodsic • Playlists</title>
+      <link data-page="style" rel="stylesheet" href="/css/playlists/index.css"/>
+    </head>
+
+    <body>
+      <section data-page="content" class="container section">
+        <header class="section__head">
+          <div>
+            <h2>Playlists của tôi</h2>
+            <small class="muted">Đã thích &amp; Tự tạo</small>
+          </div>
+        </header>
+
+        <!-- Owned (tự tạo - để sẵn, hiện có thể trống) -->
+        <section class="subsection" th:if="${owned != null}">
+          <div class="subsection__head">
+            <h3>Playlist của tôi</h3>
+            <small class="muted" th:text="${'Tổng: ' + owned.totalElements}"></small>
+          </div>
+
+          <div class="grid-4">
+            <div class="card tile"
+                 th:each="p : ${owned.content}">
+<img class="cover"
+     th:src="${#strings.isEmpty(p.coverUrl) ? '/asset/note.png' : p.coverUrl}"
+     th:alt="${p.title}"
+     onerror="this.onerror=null;this.src='/asset/note.png';">
+              <div class="card__meta">
+                <h3 th:text="${p.title}">Playlist title</h3>
+                <small class="muted" th:text="${p.ownerName}">Owner</small>
+                <small class="muted" th:if="${p.totalTracks != null}" th:text="${p.totalTracks} + ' tracks'"></small>
+              </div>
+
+              <!-- Tim (chủ sở hữu cũng có thể like/unlike nếu muốn) -->
+              <button class="heart-btn"
+                      th:if="${isAuthenticated}"
+                      th:attr="data-external-id=${p.externalId},
+                               data-title=${p.title},
+                               data-external-url=${p.externalUrl},
+                               data-cover-url=${p.coverUrl},
+                               data-owner-name=${p.ownerName},
+                               data-total-tracks=${p.totalTracks},
+                               data-snapshot-id=${p.snapshotId}"
+                      aria-pressed="false"
+                      aria-label="Thích playlist này" title="Thích playlist">
+                <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+                  <path class="heart-outline" d="M12.1 8.64l-.1.1-.11-.11C10.14 6.87 7.1 7.3 5.6 9.28c-1.23 1.63-1.05 3.92.43 5.35L12 20l5.97-5.37c1.48-1.43 1.66-3.72.43-5.35-1.5-1.98-4.54-2.41-6.3-.64z"
+                        fill="none" stroke="currentColor" stroke-width="1.8" />
+                  <path class="heart-fill" d="M12 21l-1.45-1.32C5.4 14.36 2 11.28 2 7.5 2 5.01 4.01 3 6.5 3c1.74 0 3.41.81 4.5 2.09C12.59 3.81 14.26 3 16 3 18.49 3 20.5 5.01 20.5 7.5c0 3.78-3.4 6.86-8.05 12.18L12 21z"
+                        fill="currentColor"/>
+                </svg>
+              </button>
+
+              <button class="open-spotify"
+                      th:attr="data-url=${p.externalUrl}"
+                      aria-label="Mở trên Spotify" title="Mở trên Spotify">
+                <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M7 7h10v10M17 7L7 17" fill="none" stroke="currentColor" stroke-width="2" />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="pager" th:if="${owned.totalPages > 1}">
+            <a class="btn btn-outline"
+               th:href="@{/me/playlists(pageOwned=${owned.number - 1}, pageLiked=${liked.number}, size=${owned.size})}"
+               th:if="${!owned.first}">‹ Trước</a>
+            <span class="muted" th:text="${(owned.number + 1) + ' / ' + owned.totalPages}"></span>
+            <a class="btn btn-outline"
+               th:href="@{/me/playlists(pageOwned=${owned.number + 1}, pageLiked=${liked.number}, size=${owned.size})}"
+               th:if="${!owned.last}">Sau ›</a>
+          </div>
+        </section>
+
+        <!-- Liked -->
+        <section class="subsection" th:if="${liked != null}">
+          <div class="subsection__head">
+            <h3>Đã thích</h3>
+            <small class="muted" th:text="${'Tổng: ' + liked.totalElements}"></small>
+          </div>
+
+          <div class="grid-4">
+            <div class="card tile"
+                 th:each="p : ${liked.content}">
+<img class="cover"
+     th:src="${#strings.isEmpty(p.coverUrl) ? '/asset/note.png' : p.coverUrl}"
+     th:alt="${p.title}"
+     onerror="this.onerror=null;this.src='/asset/note.png';">
+              <div class="card__meta">
+                <h3 th:text="${p.title}">Playlist title</h3>
+                <small class="muted" th:text="${p.ownerName}">Owner</small>
+                <small class="muted" th:if="${p.totalTracks != null}" th:text="${p.totalTracks} + ' tracks'"></small>
+              </div>
+
+              <!-- Tim: đã like thì set sẵn aria-pressed=true -->
+              <button class="heart-btn"
+                      th:if="${isAuthenticated}"
+                      th:attr="data-external-id=${p.externalId},
+                               data-title=${p.title},
+                               data-external-url=${p.externalUrl},
+                               data-cover-url=${p.coverUrl},
+                               data-owner-name=${p.ownerName},
+                               data-total-tracks=${p.totalTracks},
+                               data-snapshot-id=${p.snapshotId}"
+                      aria-pressed="true"
+                      aria-label="Bỏ thích playlist này" title="Bỏ thích">
+                <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+                  <path class="heart-outline" d="M12.1 8.64l-.1.1-.11-.11C10.14 6.87 7.1 7.3 5.6 9.28c-1.23 1.63-1.05 3.92.43 5.35L12 20l5.97-5.37c1.48-1.43 1.66-3.72.43-5.35-1.5-1.98-4.54-2.41-6.3-.64z"
+                        fill="none" stroke="currentColor" stroke-width="1.8" />
+                  <path class="heart-fill" d="M12 21l-1.45-1.32C5.4 14.36 2 11.28 2 7.5 2 5.01 4.01 3 6.5 3c1.74 0 3.41.81 4.5 2.09C12.59 3.81 14.26 3 16 3 18.49 3 20.5 5.01 20.5 7.5c0 3.78-3.4 6.86-8.05 12.18L12 21z"
+                        fill="currentColor"/>
+                </svg>
+              </button>
+
+              <button class="open-spotify"
+                      th:attr="data-url=${p.externalUrl}"
+                      aria-label="Mở trên Spotify" title="Mở trên Spotify">
+                <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M7 7h10v10M17 7L7 17" fill="none" stroke="currentColor" stroke-width="2" />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="pager" th:if="${liked.totalPages > 1}">
+            <a class="btn btn-outline"
+               th:href="@{/me/playlists(pageLiked=${liked.number - 1}, pageOwned=${owned.number}, size=${liked.size})}"
+               th:if="${!liked.first}">‹ Trước</a>
+            <span class="muted" th:text="${(liked.number + 1) + ' / ' + liked.totalPages}"></span>
+            <a class="btn btn-outline"
+               th:href="@{/me/playlists(pageLiked=${liked.number + 1}, pageOwned=${owned.number}, size=${liked.size})}"
+               th:if="${!liked.last}">Sau ›</a>
+          </div>
+        </section>
+      </section>
+
+      <!-- Reuse like logic -->
+      <script data-page="script" type="module" src="/js/home/likes.js"></script>
+      <script data-page="script" type="module" src="/js/playlists/index.js"></script>
+    </body>
+  </th:block>
+</html>
