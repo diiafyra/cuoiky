@@ -6,65 +6,74 @@
   content=~{::section[@data-page='content']},
   scripts=~{::script[@data-page='script']}
 )}">
-
   <head>
     <title>Tạo Playlist Mới • Moodsic</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link data-page="style" rel="stylesheet" href="/css/search/index.css"/>
   </head>
 
   <body>
-    <section data-page="content" class="container">
-      <header class="search__head">
-        <h1>Tạo Playlist Mới</h1>
-        <p class="muted">Tìm kiếm & thêm bài hát, rồi tạo playlist trên Spotify.</p>
-      </header>
+    <section data-page="content" class="container search-layout">
+      <!-- LEFT: Sticky sidebar (Picked + Create playlist) -->
+      <aside class="sidebar">
+        <div class="picked card">
+          <div class="picked__head">
+            <h3>Đã chọn <span id="pickedCount" class="chip">0</span></h3>
+          </div>
+          <div id="pickedList" class="picked__list"></div>
+        </div>
 
-      <!-- Search box -->
-      <div class="searchbar card">
-        <span class="ico">🔎</span>
+        <form id="createForm" class="create card">
+          <div class="row">
+            <label for="plName">Tên playlist</label>
+            <input id="plName" type="text" placeholder="Ví dụ: Chill tối nay"/>
+          </div>
+          <div class="row">
+            <label for="plDesc">Mô tả</label>
+            <textarea id="plDesc" rows="2" placeholder="Mô tả ngắn…"></textarea>
+          </div>
+          <div class="row inline">
+            <label class="switch">
+              <input id="plPublic" type="checkbox" checked>
+              <span></span>
+            </label>
+            <span>Công khai</span>
+          </div>
+
+          <button id="btnCreate" type="submit" class="btn btn-primary btn-big" disabled>
+            Tạo Playlist (<span id="btnCreateCount">0</span> bài)
+          </button>
+        </form>
+      </aside>
+
+      <!-- RIGHT: Search + Results -->
+      <section class="content">
+        <header class="search__head">
+          <h1>Tạo Playlist Mới</h1>
+          <p class="muted">Tìm kiếm & thêm bài hát, rồi tạo playlist trên Spotify.</p>
+        </header>
+
+        <!-- Search box -->
+        <div class="searchbar card">
+        <i class="fas fa-search"></i>          
         <input id="q" type="text" placeholder="Nhập từ khóa…"/>
-        <button id="clearQ" class="clear" aria-label="Xóa">✕</button>
-      </div>
-
-      <!-- Results -->
-      <div id="resultWrap">
-        <h3 class="section__title">Kết quả</h3>
-        <div id="results" class="results"></div>
-        <div id="noResults" class="muted" style="display:none">Không có kết quả.</div>
-      </div>
-
-      <!-- Selected -->
-      <div class="picked card">
-        <div class="picked__head">
-          <h3>Đã chọn <span id="pickedCount" class="chip">0</span></h3>
-        </div>
-        <div id="pickedList" class="picked__list"></div>
-      </div>
-
-      <!-- Create form -->
-      <form id="createForm" class="create card">
-        <div class="row">
-          <label>Tên playlist</label>
-          <input id="plName" type="text" placeholder="Ví dụ: Chill tối nay"/>
-        </div>
-        <div class="row">
-          <label>Mô tả</label>
-          <textarea id="plDesc" rows="2" placeholder="Mô tả ngắn…"></textarea>
-        </div>
-        <div class="row inline">
-          <label class="switch">
-            <input id="plPublic" type="checkbox" checked>
-            <span></span>
-          </label>
-          <span>Công khai</span>
+          <button id="clearQ" class="clear" aria-label="Xóa">✕</button>
         </div>
 
-        <button id="btnCreate" type="submit" class="btn btn-primary btn-big" disabled>
-          Tạo Playlist (<span id="btnCreateCount">0</span> bài)
-        </button>
-      </form>
+        <!-- Results -->
+        <div id="resultWrap" class="results-wrap">
+          <div class="results-head">
+            <h3 class="section__title">Kết quả</h3>
+            <small id="resultCount" class="muted"></small>
+          </div>
+
+          <div id="results" class="results"></div>
+          <div id="noResults" class="muted" style="display:none">Không có kết quả.</div>
+        </div>
+      </section>
     </section>
 
+    <!-- Giữ nguyên JS cũ -->
     <script data-page="script" type="module" src="/js/search/index.js"></script>
   </body>
 </th:block>

@@ -15,7 +15,6 @@
 .hero__text h1 {
   font-size: clamp(30px, 4.2vw, 52px);
   line-height: 1.1;
-  margin: 0.2em 0;
 }
 .hero__text p { max-width: 60ch; opacity: 0.9; }
 .hero__cta { display: flex; gap: 10px; margin-top: 14px; }
@@ -23,7 +22,7 @@
 .hero__art {
   position: relative;
   overflow: hidden;
-  min-height: 320px;
+  min-height: 60vh;
   background: radial-gradient(80% 80% at 20% 20%, #2c5660, #19343a);
   border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 16px;
@@ -166,6 +165,9 @@
 /* 5) ABOUT */
 .about {
   margin-top: 24px !important;
+  margin-left: 48px !important;
+  margin-right: 48px !important;
+  width: auto !important;
   padding: 30px;
 }
 .about__grid {

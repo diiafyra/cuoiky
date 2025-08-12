@@ -1,11 +1,13 @@
 package com.example.demo.service;
 
+import com.example.demo.aop.ApiMonitored;
 import com.example.demo.service.dto.ExploreResponse;
 import com.example.demo.service.dto.RecommendResponse;
 import com.example.demo.service.dto.search.CreatePlaylistNoStoreResponse;
 import com.example.demo.service.dto.search.SearchTracksResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.MultipartBodyBuilder;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,7 @@ import java.util.Map;
 import java.util.Objects;
 
 @Service
+@ApiMonitored
 public class ExternalApiClient {
     private final WebClient webClient;
     private final String recommendUrl;
@@ -61,21 +64,19 @@ public class ExternalApiClient {
         System.out.println("[Body keys] " + (req != null ? req.keySet() : "null"));
 
         MultipartBodyBuilder mb = new MultipartBodyBuilder();
-
-        // helper add text
         java.util.function.BiConsumer<String, Object> addText = (k, v) -> {
             if (v != null)
                 mb.part(k, String.valueOf(v));
         };
 
         if (req != null) {
-            // text parts
+            // text
             addText.accept("uid", req.get("uid"));
             addText.accept("moodText", req.get("moodText"));
             addText.accept("accessToken", req.get("accessToken"));
             addText.accept("refreshToken", req.get("refreshToken"));
 
-            // json parts
+            // json
             if (req.get("circumplex") != null) {
                 mb.part("circumplex", toJson(req.get("circumplex")))
                         .header("Content-Type", MediaType.APPLICATION_JSON_VALUE);
@@ -84,6 +85,19 @@ public class ExternalApiClient {
                 mb.part("musicProfile", toJson(req.get("musicProfile")))
                         .header("Content-Type", MediaType.APPLICATION_JSON_VALUE);
             }
+
+            if (req.get("imageBytes") instanceof byte[] bytes && bytes.length > 0) {
+                String filename = Objects.toString(req.get("imageFilename"), "mood.png");
+                String ctype = Objects.toString(req.get("imageContentType"), MediaType.IMAGE_PNG_VALUE);
+                ByteArrayResource resource = new ByteArrayResource(bytes) {
+                    @Override
+                    public String getFilename() {
+                        return filename;
+                    }
+                };
+                mb.part("image", resource).header("Content-Type", ctype);
+            }
+
         }
 
         return webClient.post()
@@ -100,7 +114,7 @@ public class ExternalApiClient {
                                 }))
                 .bodyToMono(RecommendResponse.class)
                 .doOnNext(res -> System.out.println("[PERSONAL RESPONSE] " + res))
-                .timeout(java.time.Duration.ofSeconds(5))
+                .timeout(java.time.Duration.ofSeconds(7))
                 .onErrorResume(ex -> {
                     System.out.println("[PERSONAL ERROR] " + ex.getMessage());
                     return Mono.just(new RecommendResponse());
@@ -175,14 +189,14 @@ public class ExternalApiClient {
         System.out.println("[Headers] Content-Type: application/json");
         System.out.println("[Body before default accessToken] " + req);
 
-        final String TEST_ACCESS = "BQCt1da5EU0PM_x0-HC9nnxAWMWu1dgNR-CHJ7wKw71BAus8NUcqeLFQJOfXTO4mQ7-_mSePcDogbWBXbLC3DuGGJYxiAvt5ZIAkzOaQmGq-K7iLfv7iqDLltfIPs1SxJpPhBa8V-Oc20uSV3f_CdwlS8dPKJruom8gTpoDn9qVlPaG24MjxXwwp1zey8SlURqtgih4tyGfUvLwGljgk6QJGvS2yfODfNphNkjLY-JUKr5uLtRH3utP3QSIyyXvIwH9PpN29wOA-QtQLebmGNww3dje41hu7sAkF_r_YRh4w7OcTvS2VbV22D6cctRGcWGE";
+        final String TEST_ACCESS = "AQDZnXnyX0yjS7_KD7xpuZp-2pahREzrYjIl8dFeCP3aCgeqo8QzaJF8okeyobfobnpdnBU6kt2A6yGZT52tegJjl_0B_Xa4FH-x4i8JWtBxGM_Pw2PbEjnanGvbdCtx40c";
 
         var body = new java.util.HashMap<String, Object>();
         if (req != null)
             body.putAll(req);
-        body.putIfAbsent("accessToken", TEST_ACCESS);
+        body.putIfAbsent("refreshToken", TEST_ACCESS);
 
-        System.out.println("[Body after default accessToken] " + body);
+        System.out.println("[Body after default token] " + body);
 
         return webClient.post()
                 .uri(createPlaylistUrl)

@@ -28,10 +28,10 @@ public class SecurityConfig {
             // CookieAuthenticationFilter CHỈ set auth nếu token hợp lệ, KHÔNG tự trả 401
             .addFilterBefore(new CookieAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
 .exceptionHandling(ex -> ex.authenticationEntryPoint((req, res, e) -> {
-    System.out.println("[Auth] EntryPoint 401 uri=" + req.getRequestURI()
-        + " asyncStarted=" + req.isAsyncStarted()
-        + " dispatchType=" + req.getDispatcherType()
-        + " auth=" + SecurityContextHolder.getContext().getAuthentication());
+    // System.out.println("[Auth] EntryPoint 401 uri=" + req.getRequestURI()
+    //     + " asyncStarted=" + req.isAsyncStarted()
+    //     + " dispatchType=" + req.getDispatcherType()
+    //     + " auth=" + SecurityContextHolder.getContext().getAuthentication());
     res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
     res.setContentType("application/json;charset=UTF-8");
     res.getWriter().write("{\"error\":\"Unauthorized\"}");

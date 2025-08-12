@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<th:block th:replace="~{layouts/main :: layout(
+  title=~{::title},
+  styles=~{::link[@data-page='style']},
+  content=~{::section[@data-page='content']},
+  scripts=~{::script[@data-page='script']}
+)}">
+  <head>
+    <title>Kết quả gợi ý • Moodsic</title>
+    <!-- Reuse base + home card styles -->
+    <link data-page="style" rel="stylesheet" href="/css/home/index.css"/>
+    <!-- Page-specific styles -->
+    <link data-page="style" rel="stylesheet" href="/css/recommend/show.css"/>
+  </head>
+
+  <body>
+    <section data-page="content" class="container section">
+      <!-- Header -->
+      <header class="rec-head glass">
+        <div class="rec-head__left">
+          <h2>Playlist dành cho cảm xúc của bạn</h2>
+          <div class="rec-meta">
+            <img th:if="${log != null and log.imageUrl != null}"
+                 class="canvas-thumb"
+                 th:src="${log.imageUrl}"
+                 alt="Mood canvas"/>
+            <div class="mood-text" th:if="${log != null and log.moodText != null}"
+                 th:text="${log.moodText}">—</div>
+          </div>
+        </div>
+        <span id="recCount" class="pill"
+              th:text="${log != null ? (log.totalPlaylists + ' playlists') : '0 playlist'}">0 playlist</span>
+      </header>
+
+      <!-- Keywords -->
+      <section class="keywords" th:if="${keywords != null and #lists.size(keywords) > 0}">
+        <h4>Từ khóa</h4>
+        <div class="chips">
+          <span class="chip" th:each="kw : ${keywords}" th:text="${kw}">keyword</span>
+        </div>
+      </section>
+
+      <!-- Empty state -->
+      <div id="recEmpty" class="rec-empty"
+           th:if="${log == null or log.totalPlaylists == null or log.totalPlaylists == 0}">
+        Chưa có kết quả hiển thị. Hãy thử lại từ trang Home.
+      </div>
+
+      <!-- List -->
+<section id="recGrid" class="rec-grid"></section>
+        <!-- Embed JSON for FE (no inline logic) -->
+    <script id="rec-items" type="application/json"
+            th:utext="${log != null ? log.simplePlaylistsJson : '[]'}">[]</script>
+
+    </section>
+
+            <!-- Page-specific scripts -->
+    <script data-page="script" type="module" src="/js/recommend/show.js"></script>
+    <!-- Reuse like handler from Home -->
+    <script data-page="script" type="module" src="/js/home/likes.js"></script>
+  </body>
+</th:block>
+</html>

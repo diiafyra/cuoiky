@@ -1,0 +1,168 @@
+/* ====== Recommend — Show page ====== */
+
+.rec-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 28px 0 18px;
+  padding: 16px 18px;
+  border-radius: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.rec-head.glass {
+  background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+  border: 1px solid rgba(255,255,255,.08);
+  box-shadow: 0 8px 30px rgba(0,0,0,.25);
+  backdrop-filter: blur(10px);
+}
+
+.rec-head__left h2 {
+  margin: 0 0 6px;
+  letter-spacing: .2px;
+}
+
+.rec-meta {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.canvas-thumb {
+  width: 60px;
+  height: 60px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,.10);
+  object-fit: cover;
+}
+
+.mood-text {
+  font-size: .95rem;
+  opacity: .9;
+  max-width: min(70vw, 760px);
+}
+
+.pill {
+  padding: 8px 12px;
+  border: 1px solid rgba(255,255,255,.15);
+  border-radius: 999px;
+  opacity: .9;
+}
+
+/* Keywords */
+.keywords {
+  margin: 10px 0 16px;
+}
+.keywords h4 {
+  font-size: .95rem;
+  opacity: .8;
+  margin: 0 0 8px;
+}
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.chip {
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.14);
+  opacity: .9;
+  font-size: .9rem;
+}
+
+/* Empty */
+.rec-empty {
+  opacity: .85;
+  text-align: center;
+  padding: 28px 8px;
+}
+
+/* List area (reuse .carousel from home, add subtle tweaks) */
+.carousel.modern {
+  gap: 14px;
+  scroll-snap-type: x proximity;
+}
+
+/* Card polish (reusing Home card structure) */
+.card.card--h {
+  position: relative;
+  overflow: hidden;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,.08);
+  background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+.card.card--h:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 36px rgba(0,0,0,.35);
+  border-color: rgba(255,255,255,.12);
+}
+.card.card--h img {
+  border-bottom: 1px solid rgba(255,255,255,.06);
+}
+
+/* Buttons on card */
+.card .heart-btn,
+.card .open-spotify {
+  position: absolute;
+  top: 10px;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  background: rgba(0,0,0,.35);
+  border: 1px solid rgba(255,255,255,.12);
+  backdrop-filter: blur(4px);
+  transition: background .15s ease, transform .15s ease;
+}
+.card .heart-btn:hover,
+.card .open-spotify:hover {
+  background: rgba(0,0,0,.5);
+  transform: translateY(-1px);
+}
+
+.card .heart-btn { right: 56px; }
+.card .open-spotify { right: 10px; }
+
+/* Fill heart when liked (likes.js toggles .is-liked / aria-pressed) */
+.card .heart-btn.is-liked .heart-fill { opacity: 1; }
+.card .heart-btn .heart-fill { opacity: 0; transition: opacity .15s ease; }
+
+
+
+
+/* Lưới wrap hiện đại */
+.rec-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+/* Card tile đứng dọc (reuse style trang Home nếu đã có) */
+.rec-grid .card.tile {
+  position: relative;
+  overflow: hidden;
+}
+.rec-grid .card.tile img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  display: block;
+}
+.rec-grid .card.tile .card__meta {
+  padding: 10px 12px;
+}
+
+/* Nút tim / external */
+.rec-grid .heart-btn,
+.rec-grid .open-spotify {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+.rec-grid .open-spotify { right: 42px; }
